@@ -1,25 +1,24 @@
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 
 const Entrainement = () => {
-  const router = useRouter();
   const [plan, setPlan] = useState<string>('');
 
   useEffect(() => {
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) {
-        router.replace('/login');
-        return;
+    const fetchPlan = async () => {
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('plan')
+          .eq('id', user.id)
+          .single();
+        setPlan(profile?.plan || 'Aucun plan disponible');
       }
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('plan')
-        .eq('id', data.user.id)
-        .single();
-      setPlan(profile?.plan || 'Aucun plan disponible');
-    });
-  }, [router]);
+    };
+    fetchPlan();
+  }, []);
 
   return (
     <div className="p-8">

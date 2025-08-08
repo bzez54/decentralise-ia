@@ -1,7 +1,5 @@
-import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
-import courses from '../../data/courses.json';
 
 interface Course {
   id: number;
@@ -10,18 +8,24 @@ interface Course {
 }
 
 const Courses = () => {
-  const router = useRouter();
+  const [courses, setCourses] = useState<Course[]>([]);
+
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      if (!data.session) router.replace('/login');
-    });
-  }, [router]);
+    const fetchCourses = async () => {
+      const { data } = await supabase
+        .from('courses')
+        .select('id,name,date')
+        .order('date', { ascending: true });
+      setCourses((data as Course[]) || []);
+    };
+    fetchCourses();
+  }, []);
 
   return (
     <div className="p-8">
       <h1 className="text-2xl mb-4">Courses à venir</h1>
       <ul>
-        {(courses as Course[]).map((c) => (
+        {courses.map((c) => (
           <li key={c.id} className="mb-2">
             {c.name} - {c.date}
           </li>

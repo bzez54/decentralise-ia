@@ -1,12 +1,16 @@
-import { NextPage } from 'next';
+import { GetServerSideProps, NextPage } from 'next';
+import { createClient } from '@supabase/supabase-js';
 
-const performers = [
-  { name: 'Alice', time: '32:10' },
-  { name: 'Bob', time: '33:05' },
-  { name: 'Charlie', time: '34:20' },
-];
+interface Performer {
+  name: string;
+  time: string;
+}
 
-const Home: NextPage = () => {
+interface Props {
+  performers: Performer[];
+}
+
+const Home: NextPage<Props> = ({ performers }) => {
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-4">Top 3 Performances</h1>
@@ -17,6 +21,24 @@ const Home: NextPage = () => {
       </ul>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL || '',
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+  );
+  const { data } = await supabase
+    .from('performances')
+    .select('name,time')
+    .order('time', { ascending: true })
+    .limit(3);
+
+  return {
+    props: {
+      performers: data || [],
+    },
+  };
 };
 
 export default Home;
