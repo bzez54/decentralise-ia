@@ -4,3 +4,5 @@
 
 [build.environment]
   NETLIFY_NEXT_PLUGIN_SKIP = "true"
+  NEXT_PUBLIC_SUPABASE_URL = "https://oyxxscskbupxqseekuxs.supabase.co"
+  NEXT_PUBLIC_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95eHhzY3NrYnVweHFzZWVrdXhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQ2NjkwODMsImV4cCI6MjA3MDI0NTA4M30.qWTDm7VYGMRVtqcHHCwkBwTe1GLSOIirSdh1_a3eruk"
