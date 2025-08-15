@@ -1,23 +1,21 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next();
-  const supabase = createMiddlewareClient({ req, res });
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+export function middleware(req: NextRequest) {
+  const isDashboard = req.nextUrl.pathname.startsWith('/dashboard')
+  if (!isDashboard) return NextResponse.next()
 
-  if (req.nextUrl.pathname.startsWith('/dashboard') && !session) {
-    const redirectUrl = req.nextUrl.clone();
-    redirectUrl.pathname = '/login';
-    return NextResponse.redirect(redirectUrl);
+  const hasToken =
+    req.cookies.has('sb-access-token') || req.cookies.has('sb-refresh-token')
+
+  if (!hasToken) {
+    const url = req.nextUrl.clone()
+    url.pathname = '/login'
+    return NextResponse.redirect(url)
   }
-
-  return res;
+  return NextResponse.next()
 }
 
 export const config = {
   matcher: ['/dashboard/:path*'],
-};
+}
