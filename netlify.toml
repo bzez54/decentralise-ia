@@ -4,3 +4,12 @@
 
 [build.environment]
   NODE_VERSION = "20"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+# Temporary diagnostic fallback (DISABLED). Uncomment only if routing still 404s.
+# [[redirects]]
+#   from = "/*"
+#   to = "/.netlify/functions/__next"
+#   status = 200
